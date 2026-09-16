@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>París — cuaderno de viaje</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+  :root{
+    --bg:#E8EBEE; --panel:#F6F7F8; --ink:#1A2230; --ink-2:#5A6472; --line:#CBD1D8; --gold:#B8862B;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{background:var(--bg);color:var(--ink);font-family:"Instrument Sans",system-ui,sans-serif;font-size:15px;line-height:1.45;display:flex;flex-direction:column;height:100vh}
+  a{color:var(--gold)}
+  /* Barra superior */
+  nav{display:flex;align-items:center;gap:6px;padding:10px 22px;background:var(--panel);border-bottom:1px solid var(--line);flex-shrink:0}
+  nav .brand{font-family:"Fraunces",serif;font-size:22px;font-weight:700;margin-right:18px;text-decoration:none;color:var(--ink)}
+  nav .brand em{font-style:italic;font-weight:500;color:var(--gold)}
+  nav a.tab{padding:7px 13px;border-radius:999px;text-decoration:none;color:var(--ink-2);font-weight:500;font-size:14px;display:inline-flex;gap:7px;align-items:center}
+  nav a.tab.on{background:var(--ink);color:#fff}
+  nav a.tab:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+  nav .spacer{flex:1}
+  nav .date{color:var(--ink-2);font-size:13px}
+  section.view{display:none;flex:1;min-height:0}
+  section.view.on{display:block}
+  /* Inicio */
+  #inicio{overflow:auto}
+  .home{max-width:1100px;margin:0 auto;padding:36px 28px 48px}
+  .home h1{font-family:"Fraunces",serif;font-weight:700;font-size:56px;line-height:1;margin:0 0 8px;letter-spacing:-.01em}
+  .home h1 em{font-style:italic;font-weight:500;color:var(--gold)}
+  .home .lead{color:var(--ink-2);font-size:17px;margin:0 0 30px;max-width:60ch}
+  .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+  .tile{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:8px;min-height:150px;position:relative}
+  .tile:hover{border-color:var(--ink)}
+  .tile h2{font-family:"Fraunces",serif;font-weight:600;font-size:24px;margin:0}
+  .tile p{margin:0;color:var(--ink-2);font-size:14px}
+  .tile .ico{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff}
+  .tile.map{grid-column:span 7;min-height:330px;padding:0;overflow:hidden}
+  .tile.map #minimap{position:absolute;inset:0}
+  .tile.map .over{position:absolute;left:16px;bottom:14px;background:rgba(246,247,248,.94);border:1px solid var(--line);border-radius:8px;padding:10px 14px;z-index:500}
+  .tile.map .over h2{font-size:20px}
+  .tile.weather{grid-column:span 5}
+  .tile.soon{grid-column:span 4;opacity:.65}
+  .tile.soon .tag{position:absolute;top:14px;right:14px;font-size:12px;color:var(--ink-2);border:1px solid var(--line);border-radius:999px;padding:2px 9px}
+  .wx-now{display:flex;align-items:center;gap:14px;margin-top:auto}
+  .wx-now .t{font-family:"Fraunces",serif;font-size:52px;font-weight:500;line-height:1}
+  .wx-now .d{color:var(--ink-2);font-size:14px}
+  .wx-strip{display:flex;gap:6px;margin-top:10px}
+  .wx-strip div{flex:1;text-align:center;font-size:12px;color:var(--ink-2)}
+  .wx-strip b{display:block;color:var(--ink);font-weight:600;font-size:13px}
+  .wx-strip svg{display:block;margin:3px auto}
+  /* Mapa */
+  .app{display:grid;grid-template-columns:380px 1fr;height:100%}
+  aside{background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+  header{padding:22px 28px 14px;border-bottom:1px solid var(--line)}
+  header h1{font-family:"Fraunces",Georgia,serif;font-weight:700;font-size:34px;line-height:1;margin:0 0 6px}
+  header h1 em{font-style:italic;font-weight:500;color:var(--gold)}
+  .sub{color:var(--ink-2);margin:0;font-size:14px}
+  .stats{display:flex;gap:22px;padding:14px 28px;border-bottom:1px solid var(--line)}
+  .stat b{font-family:"Fraunces",serif;font-size:26px;font-weight:500;display:block;line-height:1}
+  .stat span{color:var(--ink-2);font-size:13px}
+  .cats{padding:12px 28px;display:flex;flex-wrap:wrap;gap:8px;border-bottom:1px solid var(--line)}
+  .chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 12px 4px 5px;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;font-family:inherit;color:var(--ink)}
+  .chip i{width:20px;height:20px;border-radius:50%;background:var(--c);color:#fff;display:inline-flex;align-items:center;justify-content:center}
+  .chip.off{opacity:.38}
+  .chip:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+  .list{overflow:auto;flex:1;padding:10px 16px 20px}
+  .place{display:grid;grid-template-columns:30px 1fr auto;gap:12px;align-items:start;padding:12px;border-radius:8px;cursor:pointer;border:1px solid transparent}
+  .place:hover,.place.active{background:#fff;border-color:var(--line)}
+  .place .dot{width:30px;height:30px;border-radius:50%;background:var(--c);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .place h3{margin:0;font-size:15px;font-weight:600}
+  .place p{margin:2px 0 0;font-size:13px;color:var(--ink-2)}
+  .place a{font-size:12px;color:var(--gold);text-decoration:none;white-space:nowrap;padding-top:2px}
+  .empty{padding:10px 12px;color:var(--ink-2);font-size:13px;font-style:italic}
+  main{position:relative;min-height:0}
+  #map{position:absolute;inset:0}
+  .leaflet-container{background:#dfe3e7;font-family:inherit}
+  .leaflet-popup-content-wrapper{border-radius:8px;box-shadow:0 4px 18px rgba(26,34,48,.18)}
+  .leaflet-popup-content{margin:12px 14px;font-size:14px}
+  .leaflet-popup-content b{font-family:"Fraunces",serif;font-size:17px;font-weight:600;display:block}
+  .leaflet-popup-content small{color:var(--ink-2)}
+  .pin{position:relative;width:36px;height:44px}
+  .pin::before{content:"";position:absolute;left:4px;top:4px;width:28px;height:28px;background:var(--c);border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35)}
+  .pin span{position:absolute;left:0;top:0;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:#fff}
+  .pin.sm{transform:scale(.7);transform-origin:bottom center}
+  .note{position:absolute;left:12px;bottom:12px;background:rgba(246,247,248,.92);border:1px solid var(--line);border-radius:6px;padding:6px 10px;font-size:12px;color:var(--ink-2);z-index:500}
+  /* Tiempo */
+  #tiempo{overflow:auto}
+  .wx{max-width:1100px;margin:0 auto;padding:32px 28px 48px}
+  .wx h1{font-family:"Fraunces",serif;font-weight:700;font-size:40px;margin:0 0 4px;line-height:1}
+  .wx .sub{margin-bottom:24px}
+  .hero{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px}
+  .card h2{font-family:"Fraunces",serif;font-weight:600;font-size:20px;margin:0 0 12px}
+  .now{display:flex;align-items:center;gap:18px}
+  .now .big{font-family:"Fraunces",serif;font-size:72px;font-weight:500;line-height:1}
+  .now .meta{color:var(--ink-2);font-size:14px;line-height:1.7}
+  .now .meta b{color:var(--ink)}
+  .hours{display:flex;gap:4px;overflow:auto;padding-bottom:4px}
+  .hours div{min-width:56px;text-align:center;font-size:12px;color:var(--ink-2);padding:8px 4px;border-radius:8px}
+  .hours div.cur{background:#fff;border:1px solid var(--line)}
+  .hours b{display:block;color:var(--ink);font-size:15px;font-weight:600;margin-top:4px}
+  .hours svg{display:block;margin:4px auto 0}
+  .hours .p{color:#0288D1}
+  .days{display:grid;grid-template-columns:repeat(10,1fr);gap:8px}
+  .day{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 8px 12px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px}
+  .day.today{border-color:var(--ink)}
+  .day .dn{font-weight:600;font-size:14px}
+  .day .dd{font-size:12px;color:var(--ink-2)}
+  .day svg{margin:8px 0 4px}
+  .day .desc{font-size:12px;color:var(--ink-2);min-height:32px;line-height:1.25}
+  .day .tmax{font-family:"Fraunces",serif;font-size:26px;font-weight:500;line-height:1}
+  .day .tmin{font-size:13px;color:var(--ink-2)}
+  .day .bar{width:100%;height:5px;border-radius:3px;background:var(--line);margin:8px 0 6px;position:relative;overflow:hidden}
+  .day .bar i{position:absolute;top:0;bottom:0;border-radius:3px;background:linear-gradient(90deg,#0288D1,#FF5252)}
+  .day .rain{font-size:12px;color:#0288D1;font-weight:500}
+  .day .wind{font-size:11px;color:var(--ink-2)}
+  .wxnote{color:var(--ink-2);font-size:13px;margin-top:14px}
+  .err{background:#fff3f3;border:1px solid #f3c2c2;border-radius:8px;padding:14px;color:#8a2020}
+  @media (max-width:900px){
+    .tile.map,.tile.weather,.tile.soon{grid-column:span 12}
+    .hero{grid-template-columns:1fr}
+    .days{grid-template-columns:repeat(5,1fr)}
+    .app{grid-template-columns:1fr;grid-template-rows:auto 55vh}
+    aside{border-right:0;border-bottom:1px solid var(--line)}
+    .list{max-height:34vh}
+    main{height:55vh}
+    .home h1{font-size:38px}
+    nav{flex-wrap:wrap}
+  }
+  @media (max-width:520px){.days{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<nav>
+  <a class="brand" href="#inicio">París, <em>cuaderno</em></a>
+  <a class="tab" href="#inicio" data-v="inicio">Inicio</a>
+  <a class="tab" href="#mapa" data-v="mapa">Mapa</a>
+  <a class="tab" href="#tiempo" data-v="tiempo">Tiempo</a>
+  <span class="spacer"></span>
+  <span class="date" id="navdate"></span>
+</nav>
+
+<!-- INICIO -->
+<section class="view" id="inicio">
+  <div class="home">
+    <h1>París, <em>cuaderno de viaje</em></h1>
+    <p class="lead">Todo lo del viaje en un sitio: los lugares apuntados en el mapa, qué tiempo va a hacer y, cuando toque, el plan de cada día.</p>
+    <div class="grid">
+      <a class="tile map" href="#mapa">
+        <div id="minimap"></div>
+        <div class="over"><h2>Mapa de sitios</h2><p id="mapsum">Cargando…</p></div>
+      </a>
+      <a class="tile weather" href="#tiempo">
+        <div class="ico" style="background:#0288D1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></div>
+        <h2>Tiempo en París</h2>
+        <p>Previsión para los próximos 10 días</p>
+        <div class="wx-now" id="homeNow"><span class="d">Cargando previsión…</span></div>
+        <div class="wx-strip" id="homeStrip"></div>
+      </a>
+      <div class="tile soon"><span class="tag">Próximamente</span><div class="ico" style="background:#9C27B0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></div><h2>Itinerario</h2><p>Plan día a día con horarios y trayectos entre sitios.</p></div>
+      <div class="tile soon"><span class="tag">Próximamente</span><div class="ico" style="background:#7CB342"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/></svg></div><h2>Presupuesto</h2><p>Gastos previstos y reales: comidas, entradas, transporte.</p></div>
+      <div class="tile soon"><span class="tag">Próximamente</span><div class="ico" style="background:#673AB7"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 3h14v18H5z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></div><h2>Reservas y notas</h2><p>Billetes, alojamiento, entradas y cosas que no olvidar.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- MAPA -->
+<section class="view" id="mapa">
+<div class="app">
+  <aside>
+    <header>
+      <h1>Mis <em>sitios</em></h1>
+      <p class="sub">Del mapa "Paris" exportado desde Google My Maps</p>
+    </header>
+    <div class="stats">
+      <div class="stat"><b id="nPlaces">0</b><span>lugares</span></div>
+      <div class="stat"><b id="nCats">0</b><span>categorías</span></div>
+      <div class="stat"><b id="span">—</b><span>de punta a punta</span></div>
+    </div>
+    <div class="cats" id="cats"></div>
+    <div class="list" id="list"></div>
+  </aside>
+  <main>
+    <div id="map"></div>
+    <div class="note">Pulsa un lugar para centrarlo</div>
+  </main>
+</div>
+</section>
+
+<!-- TIEMPO -->
+<section class="view" id="tiempo">
+  <div class="wx">
+    <h1>Tiempo en París</h1>
+    <p class="sub" id="wxsub">Previsión de Open-Meteo para los próximos 10 días</p>
+    <div id="wxbody"><p class="wxnote">Cargando previsión…</p></div>
+  </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const ICONS = {
+  bag:     '<path d="M6 8h12l1 12H5L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
+  coins:   '<circle cx="9" cy="9" r="5"/><path d="M13.5 6.5a5 5 0 1 1-1 8.6"/><path d="M9 7v4M7.5 9h3"/>',
+  tower:   '<path d="M12 3l3 8H9l3-8z"/><path d="M8 21l1.5-10h5L16 21"/><path d="M6 21h12"/><path d="M8 16h8"/>',
+  cutlery: '<path d="M6 3v7a2 2 0 0 0 2 2 2 2 0 0 0 2-2V3"/><path d="M8 12v9"/><path d="M17 3c-2 0-3 3-3 6v3h3v9"/>',
+  tree:    '<path d="M12 3l4 5h-2l3 4h-2l3 4H6l3-4H7l3-4H8l4-5z"/><path d="M11 16h2v5h-2z"/>',
+  music:   '<circle cx="7" cy="17" r="3"/><circle cx="17" cy="15" r="3"/><path d="M10 17V6l10-2v11"/>',
+};
+const CATS = [
+  {id:"tiendas",      name:"Tiendas",              color:"#0288D1", icon:"bag"},
+  {id:"baratos",      name:"Restaurantes baratos", color:"#7CB342", icon:"coins"},
+  {id:"torres",       name:"Torres y miradores",   color:"#9C27B0", icon:"tower"},
+  {id:"restaurantes", name:"Restaurantes",         color:"#8A94A0", icon:"cutlery"},
+  {id:"navidad",      name:"Navidad",              color:"#FF5252", icon:"tree"},
+  {id:"techno",       name:"Techno",               color:"#673AB7", icon:"music"},
+];
+const svg = (icon,size=16)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[icon]}</svg>`;
+const PLACES = [
+  {name:"Ladurée",                cat:"tiendas", lat:48.870839,  lng:2.30319},
+  {name:"Cedric Grolet Opéra",    cat:"tiendas", lat:48.8678522, lng:2.3332982},
+  {name:"Mangez et cassez-vous",  cat:"baratos", lat:48.8741307, lng:2.3352254},
+  {name:"Bar Perché - Printemps", cat:"torres",  lat:48.8739295, lng:2.3273592},
+  {name:"Tuileries Garden",       cat:"navidad", lat:48.8634916, lng:2.3274943},
+  {name:"Mia Mao",                cat:"techno",  lat:48.8965897, lng:2.3954742},
+];
+const catOf = id => CATS.find(c=>c.id===id);
+const km = (a,b)=>{const R=6371,d=x=>x*Math.PI/180,dl=d(b.lat-a.lat),dg=d(b.lng-a.lng),
+  h=Math.sin(dl/2)**2+Math.cos(d(a.lat))*Math.cos(d(b.lat))*Math.sin(dg/2)**2;return 2*R*Math.asin(Math.sqrt(h));};
+const gmaps = p => `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}`;
+
+// Vecino más cercano para cada sitio
+PLACES.forEach(p=>{
+  let best=null;PLACES.forEach(q=>{if(q!==p){const d=km(p,q);if(!best||d<best.d)best={q,d};}});
+  p.near=best;
+});
+
+// Mapa
+const map = L.map("map",{zoomControl:true}).setView([48.875,2.34],13);
+window._map = map;
+const CARTO_KEY = "cb1_3noo_1_1986f39f42e52c474e5a16cc"; // pega aquí tu clave de carto.com/basemaps/apikey
+(CARTO_KEY
+  ? L.tileLayer(`https://{s}.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}{r}.png?key=${CARTO_KEY}`,{subdomains:"abcd",maxZoom:20,attribution:"© OpenStreetMap, © CARTO"})
+  : L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",{maxZoom:19,attribution:"© Esri, HERE, Garmin, OpenStreetMap contributors"})
+).addTo(map);
+const active = new Set(CATS.map(c=>c.id));
+const markers = {};
+PLACES.forEach((p,i)=>{
+  const c = catOf(p.cat);
+  const icon = L.divIcon({className:"",html:`<div class="pin" style="--c:${c.color}"><span>${svg(c.icon,18)}</span></div>`,iconSize:[36,44],iconAnchor:[18,44],popupAnchor:[0,-40]});
+  const m = L.marker([p.lat,p.lng],{icon}).bindPopup(
+    `<b>${p.name}</b><small>${c.name}</small><br><small>Más cerca: ${p.near.q.name} (${p.near.d.toFixed(1)} km)</small><br><a href="${gmaps(p)}" target="_blank" rel="noopener">Cómo llegar</a>`);
+  m.on("click",()=>select(i,false));
+  markers[i]=m; m.addTo(map);
+});
+
+// Chips de categoría
+const catsEl = document.getElementById("cats");
+CATS.forEach(c=>{
+  const n = PLACES.filter(p=>p.cat===c.id).length;
+  const b = document.createElement("button");
+  b.className="chip"; b.style.setProperty("--c",c.color);
+  b.innerHTML=`<i>${svg(c.icon,12)}</i>${c.name} <span style="color:var(--ink-2)">${n}</span>`;
+  b.onclick=()=>{active.has(c.id)?active.delete(c.id):active.add(c.id);b.classList.toggle("off");render();};
+  catsEl.appendChild(b);
+});
+
+// Lista
+const listEl = document.getElementById("list");
+function render(){
+  listEl.innerHTML="";
+  const shown = PLACES.map((p,i)=>({p,i})).filter(({p})=>active.has(p.cat));
+  if(!shown.length){listEl.innerHTML='<div class="empty">Ninguna categoría activa. Pulsa una para mostrar sus sitios.</div>';}
+  shown.sort((a,b)=>a.p.cat.localeCompare(b.p.cat)||a.p.name.localeCompare(b.p.name)).forEach(({p,i})=>{
+    const c=catOf(p.cat);
+    const d=document.createElement("div");
+    d.className="place"; d.id="pl"+i; d.style.setProperty("--c",c.color); d.tabIndex=0;
+    d.innerHTML=`<span class="dot">${svg(c.icon,16)}</span><div><h3>${p.name}</h3><p>${c.name} · a ${p.near.d.toFixed(1)} km de ${p.near.q.name}</p></div><a href="${gmaps(p)}" target="_blank" rel="noopener">Cómo llegar</a>`;
+    d.onclick=e=>{if(e.target.tagName!=="A")select(i,true);};
+    d.onkeydown=e=>{if(e.key==="Enter")select(i,true);};
+    listEl.appendChild(d);
+  });
+  Object.entries(markers).forEach(([i,m])=>{active.has(PLACES[i].cat)?m.addTo(map):map.removeLayer(m);});
+  const pts=shown.map(({p})=>[p.lat,p.lng]);
+  if(pts.length>1)map.fitBounds(pts,{padding:[50,50]});
+  document.getElementById("nPlaces").textContent=shown.length;
+  document.getElementById("nCats").textContent=new Set(shown.map(({p})=>p.cat)).size;
+  let max=0;shown.forEach(a=>shown.forEach(b=>{max=Math.max(max,km(a.p,b.p));}));
+  document.getElementById("span").textContent=shown.length>1?max.toFixed(1)+" km":"—";
+}
+function select(i,fly){
+  document.querySelectorAll(".place").forEach(x=>x.classList.remove("active"));
+  const row=document.getElementById("pl"+i); if(row){row.classList.add("active");row.scrollIntoView({block:"nearest"});}
+  if(fly){map.flyTo([PLACES[i].lat,PLACES[i].lng],16,{duration:.8});markers[i].openPopup();}
+}
+render();
+
+
+/* ---------- Minimapa de la portada ---------- */
+const mini = L.map("minimap",{zoomControl:false,attributionControl:false,dragging:false,scrollWheelZoom:false,doubleClickZoom:false,boxZoom:false,keyboard:false,touchZoom:false});
+mini.setView([48.875,2.34],12);
+const tileUrl = CARTO_KEY ? `https://{s}.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}{r}.png?key=${CARTO_KEY}` : "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}";
+L.tileLayer(tileUrl,{subdomains:"abcd",maxZoom:19}).addTo(mini);
+PLACES.forEach(p=>{const c=catOf(p.cat);
+  L.marker([p.lat,p.lng],{icon:L.divIcon({className:"",html:`<div class="pin sm" style="--c:${c.color}"><span>${svg(c.icon,18)}</span></div>`,iconSize:[36,44],iconAnchor:[18,44]}),interactive:false}).addTo(mini);});
+mini.fitBounds(PLACES.map(p=>[p.lat,p.lng]),{padding:[30,30]});
+document.getElementById("mapsum").textContent=`${PLACES.length} lugares en ${new Set(PLACES.map(p=>p.cat)).size} categorías`;
+
+/* ---------- Navegación ---------- */
+const views=["inicio","mapa","tiempo"];
+function show(){
+  let v=location.hash.replace("#","")||"inicio"; if(!views.includes(v))v="inicio";
+  views.forEach(x=>{document.getElementById(x).classList.toggle("on",x===v);});
+  document.querySelectorAll("nav .tab").forEach(t=>t.classList.toggle("on",t.dataset.v===v));
+  setTimeout(()=>{ if(v==="mapa")map.invalidateSize(); if(v==="inicio"){mini.invalidateSize();mini.fitBounds(PLACES.map(p=>[p.lat,p.lng]),{padding:[30,30]});} },50);
+}
+window.addEventListener("hashchange",show); show();
+document.getElementById("navdate").textContent=new Date().toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long"});
+
+/* ---------- Tiempo (Open-Meteo, sin clave) ---------- */
+const WX = {
+  0:["Despejado","sun"],1:["Mayormente despejado","sun"],2:["Parcialmente nuboso","cloudsun"],3:["Nublado","cloud"],
+  45:["Niebla","fog"],48:["Niebla con escarcha","fog"],
+  51:["Llovizna débil","drizzle"],53:["Llovizna","drizzle"],55:["Llovizna intensa","drizzle"],56:["Llovizna helada","drizzle"],57:["Llovizna helada","drizzle"],
+  61:["Lluvia débil","rain"],63:["Lluvia","rain"],65:["Lluvia fuerte","rain"],66:["Lluvia helada","rain"],67:["Lluvia helada","rain"],
+  71:["Nieve débil","snow"],73:["Nieve","snow"],75:["Nieve fuerte","snow"],77:["Granizo fino","snow"],
+  80:["Chubascos débiles","rain"],81:["Chubascos","rain"],82:["Chubascos fuertes","rain"],85:["Chubascos de nieve","snow"],86:["Chubascos de nieve","snow"],
+  95:["Tormenta","storm"],96:["Tormenta con granizo","storm"],99:["Tormenta con granizo","storm"]};
+const WXI = {
+  sun:'<circle cx="12" cy="12" r="4" fill="#F2C14E" stroke="#E0A800"/><path stroke="#E0A800" d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  cloudsun:'<circle cx="8" cy="8" r="3.5" fill="#F2C14E" stroke="#E0A800"/><path stroke="#E0A800" d="M8 1.5V3M1.5 8H3M3.4 3.4l1 1M12.6 3.4l-1 1"/><path fill="#fff" stroke="#8A94A0" d="M8.5 20a4 4 0 0 1-.5-8 5 5 0 0 1 9.6 1.5A3.3 3.3 0 0 1 17 20H8.5z"/>',
+  cloud:'<path fill="#fff" stroke="#8A94A0" d="M7 19a4.5 4.5 0 0 1-.6-9A6 6 0 0 1 18 11.5 3.8 3.8 0 0 1 17.5 19H7z"/>',
+  fog:'<path stroke="#8A94A0" d="M4 10h16M6 14h14M4 18h12"/>',
+  drizzle:'<path fill="#fff" stroke="#8A94A0" d="M7 15a4 4 0 0 1-.6-8A6 6 0 0 1 18 8 3.5 3.5 0 0 1 17.5 15H7z"/><path stroke="#0288D1" d="M9 18v2M13 18v2M17 18v2"/>',
+  rain:'<path fill="#fff" stroke="#8A94A0" d="M7 14a4 4 0 0 1-.6-8A6 6 0 0 1 18 7 3.5 3.5 0 0 1 17.5 14H7z"/><path stroke="#0288D1" d="M8 17l-1 4M12 17l-1 4M16 17l-1 4"/>',
+  snow:'<path fill="#fff" stroke="#8A94A0" d="M7 14a4 4 0 0 1-.6-8A6 6 0 0 1 18 7 3.5 3.5 0 0 1 17.5 14H7z"/><path stroke="#5A6472" d="M8 18l2 2M10 18l-2 2M12 19l2 2M14 19l-2 2"/>',
+  storm:'<path fill="#fff" stroke="#8A94A0" d="M7 13a4 4 0 0 1-.6-8A6 6 0 0 1 18 6 3.5 3.5 0 0 1 17.5 13H7z"/><path fill="#F2C14E" stroke="#E0A800" d="M13 13l-3 5h3l-1 4 4-6h-3l1-3z"/>'};
+const wxsvg=(code,size=32)=>{const k=(WX[code]||["","cloud"])[1];return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${WXI[k]}</svg>`;};
+const wxname=code=>(WX[code]||["Variable"])[0];
+const DN=["dom","lun","mar","mié","jue","vie","sáb"];
+
+async function loadWeather(){
+  const url="https://api.open-meteo.com/v1/forecast?latitude=48.8566&longitude=2.3522&timezone=Europe%2FParis&forecast_days=10"
+   +"&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,relative_humidity_2m,precipitation"
+   +"&hourly=temperature_2m,precipitation_probability,weather_code"
+   +"&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,sunrise,sunset";
+  try{
+    const r=await fetch(url); if(!r.ok)throw new Error("HTTP "+r.status);
+    const d=await r.json(); renderWeather(d);
+  }catch(e){
+    const m='<div class="err">No se ha podido cargar la previsión. Comprueba la conexión y recarga la página.</div>';
+    document.getElementById("wxbody").innerHTML=m; document.getElementById("homeNow").innerHTML='<span class="d">Sin datos de tiempo</span>';
+  }
+}
+function renderWeather(d){
+  const c=d.current, dy=d.daily, h=d.hourly;
+  const nowIdx=h.time.findIndex(t=>t>=c.time.slice(0,13));
+  const start=Math.max(0,nowIdx);
+  const allMin=Math.min(...dy.temperature_2m_min), allMax=Math.max(...dy.temperature_2m_max), rng=allMax-allMin||1;
+
+  // Portada
+  document.getElementById("homeNow").innerHTML=`${wxsvg(c.weather_code,56)}<div><div class="t">${Math.round(c.temperature_2m)}°</div><div class="d">${wxname(c.weather_code)} · sensación ${Math.round(c.apparent_temperature)}°</div></div>`;
+  document.getElementById("homeStrip").innerHTML=dy.time.slice(0,5).map((t,i)=>{const dt=new Date(t);return `<div>${i===0?"hoy":DN[dt.getDay()]}${wxsvg(dy.weather_code[i],26)}<b>${Math.round(dy.temperature_2m_max[i])}°</b>${Math.round(dy.temperature_2m_min[i])}°</div>`;}).join("");
+
+  // Vista Tiempo
+  const hours=[];for(let i=start;i<start+24&&i<h.time.length;i++)hours.push(i);
+  const html=`
+  <div class="hero">
+    <div class="card"><h2>Ahora mismo</h2>
+      <div class="now">${wxsvg(c.weather_code,84)}<div class="big">${Math.round(c.temperature_2m)}°</div>
+      <div class="meta"><b>${wxname(c.weather_code)}</b><br>Sensación ${Math.round(c.apparent_temperature)}° · humedad ${c.relative_humidity_2m}%<br>Viento ${Math.round(c.wind_speed_10m)} km/h · lluvia ${c.precipitation} mm<br>Sol ${dy.sunrise[0].slice(11)} – ${dy.sunset[0].slice(11)}</div></div></div>
+    <div class="card"><h2>Próximas 24 horas</h2>
+      <div class="hours">${hours.map((i,k)=>`<div class="${k===0?"cur":""}">${k===0?"ahora":h.time[i].slice(11,16)}${wxsvg(h.weather_code[i],26)}<b>${Math.round(h.temperature_2m[i])}°</b><span class="p">${h.precipitation_probability[i]}%</span></div>`).join("")}</div></div>
+  </div>
+  <div class="days">${dy.time.map((t,i)=>{const dt=new Date(t);const lo=(dy.temperature_2m_min[i]-allMin)/rng*100,hi=(dy.temperature_2m_max[i]-allMin)/rng*100;
+    return `<div class="day ${i===0?"today":""}"><span class="dn">${i===0?"Hoy":DN[dt.getDay()]}</span><span class="dd">${dt.getDate()} ${dt.toLocaleDateString("es-ES",{month:"short"})}</span>
+      ${wxsvg(dy.weather_code[i],40)}<span class="desc">${wxname(dy.weather_code[i])}</span>
+      <span class="tmax">${Math.round(dy.temperature_2m_max[i])}°</span><span class="tmin">mín ${Math.round(dy.temperature_2m_min[i])}°</span>
+      <div class="bar"><i style="left:${lo}%;right:${100-hi}%"></i></div>
+      <span class="rain">${dy.precipitation_probability_max[i]}% · ${dy.precipitation_sum[i]} mm</span><span class="wind">viento ${Math.round(dy.wind_speed_10m_max[i])} km/h</span></div>`;}).join("")}</div>
+  <p class="wxnote">Datos de Open-Meteo, actualizados a las ${c.time.slice(11)} (hora de París). Se recargan cada vez que abres la página.</p>`;
+  document.getElementById("wxbody").innerHTML=html;
+}
+loadWeather();
+</script>
+</body>
+</html>
