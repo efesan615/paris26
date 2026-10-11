@@ -2,7 +2,12 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="París">
+<meta name="theme-color" content="#F6F7F8">
+<link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%231A2230'/><text x='90' y='118' font-family='Georgia,serif' font-style='italic' font-size='92' fill='%23B8862B' text-anchor='middle'>P</text></svg>">
 <title>París — cuaderno de viaje</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -13,7 +18,7 @@
   }
   *{box-sizing:border-box}
   html,body{margin:0;height:100%}
-  body{background:var(--bg);color:var(--ink);font-family:"Instrument Sans",system-ui,sans-serif;font-size:15px;line-height:1.45;display:flex;flex-direction:column;height:100vh}
+  body{background:var(--bg);color:var(--ink);font-family:"Instrument Sans",system-ui,sans-serif;font-size:15px;line-height:1.45;display:flex;flex-direction:column;height:100dvh;-webkit-text-size-adjust:100%}
   a{color:var(--gold)}
   /* Barra superior */
   nav{display:flex;align-items:center;gap:6px;padding:10px 22px;background:var(--panel);border-bottom:1px solid var(--line);flex-shrink:0}
@@ -44,6 +49,12 @@
   .tile.map .over h2{font-size:20px}
   .tile.weather{grid-column:span 5}
   .tile.soon{grid-column:span 4;opacity:.65}
+  .tile.trip{grid-column:span 4;background:var(--ink);color:#fff;border-color:var(--ink)}
+  .tile.trip p{color:#AEB6C2}
+  .tile.trip:hover{border-color:var(--gold)}
+  .cd{margin-top:auto;display:flex;align-items:baseline;gap:8px}
+  .cd b{font-family:"Fraunces",serif;font-size:44px;font-weight:500;color:#E8C77A;line-height:1}
+  .cd span{color:#AEB6C2;font-size:14px}
   .tile.soon .tag{position:absolute;top:14px;right:14px;font-size:12px;color:var(--ink-2);border:1px solid var(--line);border-radius:999px;padding:2px 9px}
   .wx-now{display:flex;align-items:center;gap:14px;margin-top:auto}
   .wx-now .t{font-family:"Fraunces",serif;font-size:52px;font-weight:500;line-height:1}
@@ -65,7 +76,12 @@
   .cats{padding:12px 28px;display:flex;flex-wrap:wrap;gap:8px;border-bottom:1px solid var(--line)}
   .chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 12px 4px 5px;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;font-family:inherit;color:var(--ink)}
   .chip i{width:20px;height:20px;border-radius:50%;background:var(--c);color:#fff;display:inline-flex;align-items:center;justify-content:center}
-  .chip.off{opacity:.38}
+  .chip .n{color:var(--ink-2)}
+  .chip.on{background:var(--ink);border-color:var(--ink);color:#fff}
+  .chip.on .n{color:#AEB6C2}
+  .chip.on i{box-shadow:0 0 0 2px #fff}
+  .chip i:empty{display:none}
+  .chip:has(i:empty){padding-left:12px}
   .chip:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
   .list{overflow:auto;flex:1;padding:10px 16px 20px}
   .place{display:grid;grid-template-columns:30px 1fr auto;gap:12px;align-items:start;padding:12px;border-radius:8px;cursor:pointer;border:1px solid transparent}
@@ -81,11 +97,13 @@
   .leaflet-popup-content-wrapper{border-radius:8px;box-shadow:0 4px 18px rgba(26,34,48,.18)}
   .leaflet-popup-content{margin:12px 14px;font-size:14px}
   .leaflet-popup-content b{font-family:"Fraunces",serif;font-size:17px;font-weight:600;display:block}
-  .leaflet-popup-content small{color:var(--ink-2)}
-  .pin{position:relative;width:36px;height:44px}
-  .pin::before{content:"";position:absolute;left:4px;top:4px;width:28px;height:28px;background:var(--c);border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35)}
-  .pin span{position:absolute;left:0;top:0;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:#fff}
-  .pin.sm{transform:scale(.7);transform-origin:bottom center}
+  .leaflet-popup-content small{color:var(--ink-2);display:block;margin-top:2px}
+  .leaflet-popup-content > a{display:inline-block;margin-top:8px;font-weight:500}
+  .pin{position:relative;width:36px;height:46px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35))}
+  .pin > svg.shape{position:absolute;inset:0;display:block}
+  .pin .ico{position:absolute;left:4px;top:4px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:#fff}
+  .pin .ico svg{display:block}
+  .pin.sm{transform:scale(.75);transform-origin:18px 45px}
   .note{position:absolute;left:12px;bottom:12px;background:rgba(246,247,248,.92);border:1px solid var(--line);border-radius:6px;padding:6px 10px;font-size:12px;color:var(--ink-2);z-index:500}
   /* Tiempo */
   #tiempo{overflow:auto}
@@ -99,6 +117,7 @@
   .now .big{font-family:"Fraunces",serif;font-size:72px;font-weight:500;line-height:1}
   .now .meta{color:var(--ink-2);font-size:14px;line-height:1.7}
   .now .meta b{color:var(--ink)}
+  .hero > .card{min-width:0}
   .hours{display:flex;gap:4px;overflow:auto;padding-bottom:4px}
   .hours div{min-width:56px;text-align:center;font-size:12px;color:var(--ink-2);padding:8px 4px;border-radius:8px}
   .hours div.cur{background:#fff;border:1px solid var(--line)}
@@ -120,26 +139,130 @@
   .day .wind{font-size:11px;color:var(--ink-2)}
   .wxnote{color:var(--ink-2);font-size:13px;margin-top:14px}
   .err{background:#fff3f3;border:1px solid #f3c2c2;border-radius:8px;padding:14px;color:#8a2020}
-  @media (max-width:900px){
-    .tile.map,.tile.weather,.tile.soon{grid-column:span 12}
-    .hero{grid-template-columns:1fr}
-    .days{grid-template-columns:repeat(5,1fr)}
-    .app{grid-template-columns:1fr;grid-template-rows:auto 55vh}
-    aside{border-right:0;border-bottom:1px solid var(--line)}
-    .list{max-height:34vh}
-    main{height:55vh}
-    .home h1{font-size:38px}
-    nav{flex-wrap:wrap}
+
+  /* Mapa: notas y grupos */
+  .grp{font-family:"Fraunces",serif;font-weight:600;font-size:15px;margin:14px 12px 4px;color:var(--ink-2)}
+  .grp:first-child{margin-top:4px}
+  .place .pn{color:var(--ink);font-size:13px;margin-top:5px;padding-left:9px;border-left:2px solid var(--c);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .place.active .pn{-webkit-line-clamp:unset}
+  .pnote{margin:8px 0;padding:8px 10px;background:#F6F7F8;border-radius:6px;font-size:13px;line-height:1.4;color:var(--ink)}
+  .pin.hotel .ico{color:#E8C77A}
+  /* Reserva */
+  .tripbar{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:20px;background:var(--ink);color:#fff;border-radius:14px;padding:20px 24px;margin-bottom:16px}
+  .tripbar span{display:block;font-size:13px;color:#AEB6C2}
+  .tripbar b{display:block;font-family:"Fraunces",serif;font-size:28px;font-weight:500;line-height:1.1}
+  .tripbar small{color:#AEB6C2;font-size:13px}
+  .tripbar .nights{display:flex;align-items:center;gap:10px}
+  .tripbar .nights i{flex:1;height:1px;background:#4A5566}
+  .tripbar .nights em{font-style:normal;color:#E8C77A;font-size:14px;white-space:nowrap}
+  .tripbar .count{border-left:1px solid #4A5566;padding-left:22px;text-align:right}
+  .tripbar .count b{color:#E8C77A;font-size:40px}
+  .rgrid{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:16px;align-items:start}
+  .addr{margin:0 0 14px;color:var(--ink-2)}
+  .actions{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .btn{display:inline-block;padding:9px 14px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--ink);text-decoration:none;font-size:14px;font-weight:500}
+  .btn.dark{background:var(--ink);border-color:var(--ink);color:#fff}
+  .btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+  dl{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;margin:0;font-size:14px}
+  dt{color:var(--ink-2)} dd{margin:0} dd a{color:var(--ink)}
+  dd.num{font-variant-numeric:tabular-nums;letter-spacing:.03em;font-weight:600}
+  .hint{font-size:13px;color:var(--ink-2);margin:14px 0 0}
+  .paybar{height:10px;border-radius:5px;background:var(--line);overflow:hidden}
+  .paybar i{display:block;height:100%;background:#7CB342}
+  .paylegend{display:flex;justify-content:space-between;font-size:13px;color:var(--ink-2);margin:6px 0 14px}
+  .paylegend b{color:var(--ink)}
+  .price{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+  .price td{padding:7px 0;border-bottom:1px solid var(--line);vertical-align:top}
+  .price td:last-child{text-align:right;white-space:nowrap;padding-left:12px}
+  .price small{color:var(--ink-2)}
+  .price .sum td{font-weight:600}
+  .price .total td{font-weight:700;border-bottom:0;font-family:"Fraunces",serif;font-size:18px;padding-top:10px}
+  .conds{margin:0;padding-left:18px;font-size:14px}
+  .conds li{margin-bottom:8px}
+  .conds .warn b{color:#C62828}
+  .card h2.mt{margin-top:20px}
+  .todo{display:flex;gap:10px;align-items:flex-start;font-size:14px;padding:7px 0;cursor:pointer}
+  .todo input{width:18px;height:18px;margin:1px 0 0;accent-color:var(--ink)}
+  .todo:has(input:checked){color:var(--ink-2);text-decoration:line-through}
+  .day.trip{border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}
+  .day .tl{font-size:11px;color:var(--gold);font-weight:600}
+  .tripnote{background:#fff;border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:8px;padding:10px 14px;font-size:14px;margin-bottom:16px}
+  @media (max-width:1000px){.rgrid{grid-template-columns:1fr 1fr}.hotelcard{grid-column:span 2}}
+  /* ---------- Móvil (iPhone) ---------- */
+  @media (max-width:760px){
+    body{font-size:16px}
+    nav{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:1000;border-bottom:0;border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom));justify-content:space-around;gap:0;background:rgba(246,247,248,.94);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+    nav .brand,nav .spacer,nav .date{display:none}
+    nav a.tab{flex-direction:column;gap:3px;font-size:11px;padding:6px 14px;border-radius:12px;min-width:76px}
+    nav a.tab svg{width:22px;height:22px}
+    nav a.tab.on{background:transparent;color:var(--gold)}
+    section.view{padding-bottom:calc(72px + env(safe-area-inset-bottom))}
+    /* Inicio */
+    .home{padding:calc(20px + env(safe-area-inset-top)) 18px 24px}
+    .home h1{font-size:40px}
+    .home .lead{font-size:15px;margin-bottom:20px}
+    .grid{display:flex;flex-direction:column;gap:12px}
+    .tile{min-height:0;padding:16px}
+    .tile.map{min-height:240px}
+    .tile h2{font-size:21px}
+    .wx-now .t{font-size:44px}
+    /* Mapa: mapa arriba, lista abajo estilo hoja */
+    .app{display:flex;flex-direction:column;height:100%}
+    main{flex:0 0 46%;min-height:240px;order:-1}
+    aside{flex:1;border-right:0;border-top:1px solid var(--line);border-radius:18px 18px 0 0;margin-top:-16px;z-index:2;box-shadow:0 -6px 20px rgba(26,34,48,.10)}
+    header{padding:14px 18px 8px}
+    header::before{content:"";display:block;width:40px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 10px}
+    header h1{font-size:24px}
+    .stats{padding:8px 18px;gap:16px}
+    .stat b{font-size:20px}
+    .cats{padding:8px 18px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .chip{flex-shrink:0;padding:6px 14px 6px 6px;font-size:14px}
+    .list{padding:6px 10px 12px}
+    .place{padding:12px 10px;grid-template-columns:34px 1fr auto;gap:12px}
+    .place .dot{width:34px;height:34px}
+    .place a{font-size:13px;padding:8px 10px;border:1px solid var(--line);border-radius:8px}
+    .note{display:none}
+    .leaflet-control-zoom{display:none}
+    /* Tiempo */
+    .wx{padding:calc(20px + env(safe-area-inset-top)) 18px 24px}
+    .wx h1{font-size:30px}
+    .hero{grid-template-columns:1fr;gap:12px}
+    .card{padding:16px}
+    .now .big{font-size:56px}
+    .hours div{min-width:60px}
+    .days{display:flex;flex-direction:column;gap:8px}
+    .day{flex-direction:row;text-align:left;align-items:center;gap:10px;padding:10px 14px;display:grid;grid-template-columns:52px 40px 1fr auto;grid-template-rows:auto auto}
+    .day .dn{grid-row:1}.day .dd{grid-row:2;grid-column:1}
+    .day svg{grid-row:1/3;grid-column:2;margin:0}
+    .day .desc{grid-row:1;grid-column:3;min-height:0}
+    .day .rain{grid-row:2;grid-column:3}
+    .day .tmax{grid-row:1;grid-column:4;font-size:22px;text-align:right}
+    .day .tmin{grid-row:2;grid-column:4;text-align:right}
+    .day .bar,.day .wind{display:none}
+    /* Reserva */
+    .tripbar{grid-template-columns:1fr auto 1fr;gap:10px;padding:16px}
+    .tripbar b{font-size:20px}
+    .tripbar .nights{flex-direction:column;gap:2px}
+    .tripbar .nights i{display:none}
+    .tripbar .count{grid-column:1/-1;border-left:0;border-top:1px solid #4A5566;padding:12px 0 0;text-align:left;display:flex;align-items:baseline;gap:8px}
+    .tripbar .count b{font-size:32px}
+    .rgrid{grid-template-columns:1fr;gap:12px}
+    .hotelcard{grid-column:auto}
+    .actions .btn{flex:1;text-align:center;padding:11px 10px}
+    nav a.tab{min-width:0;flex:1;padding:6px 4px}
   }
-  @media (max-width:520px){.days{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:760px) and (display-mode:standalone){
+    .home,.wx{padding-top:calc(28px + env(safe-area-inset-top))}
+  }
 </style>
 </head>
 <body>
 <nav>
   <a class="brand" href="#inicio">París, <em>cuaderno</em></a>
-  <a class="tab" href="#inicio" data-v="inicio">Inicio</a>
-  <a class="tab" href="#mapa" data-v="mapa">Mapa</a>
-  <a class="tab" href="#tiempo" data-v="tiempo">Tiempo</a>
+  <a class="tab" href="#inicio" data-v="inicio"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg>Inicio</a>
+  <a class="tab" href="#mapa" data-v="mapa"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6-5.3-6-11a6 6 0 0 1 12 0c0 5.7-6 11-6 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Mapa</a>
+  <a class="tab" href="#tiempo" data-v="tiempo"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a4.5 4.5 0 0 1-.6-9A6 6 0 0 1 18 10.5 3.8 3.8 0 0 1 17.5 18H7z"/></svg>Tiempo</a>
+  <a class="tab" href="#viaje" data-v="viaje"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M3 13h18"/></svg>Reserva</a>
   <span class="spacer"></span>
   <span class="date" id="navdate"></span>
 </nav>
@@ -148,7 +271,7 @@
 <section class="view" id="inicio">
   <div class="home">
     <h1>París, <em>cuaderno de viaje</em></h1>
-    <p class="lead">Todo lo del viaje en un sitio: los lugares apuntados en el mapa, qué tiempo va a hacer y, cuando toque, el plan de cada día.</p>
+    <p class="lead">Del 19 al 23 de noviembre en el Hotel Darcet. Aquí están los sitios apuntados con sus notas, el tiempo y la reserva.</p>
     <div class="grid">
       <a class="tile map" href="#mapa">
         <div id="minimap"></div>
@@ -163,7 +286,12 @@
       </a>
       <div class="tile soon"><span class="tag">Próximamente</span><div class="ico" style="background:#9C27B0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></div><h2>Itinerario</h2><p>Plan día a día con horarios y trayectos entre sitios.</p></div>
       <div class="tile soon"><span class="tag">Próximamente</span><div class="ico" style="background:#7CB342"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/></svg></div><h2>Presupuesto</h2><p>Gastos previstos y reales: comidas, entradas, transporte.</p></div>
-      <div class="tile soon"><span class="tag">Próximamente</span><div class="ico" style="background:#673AB7"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 3h14v18H5z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></div><h2>Reservas y notas</h2><p>Billetes, alojamiento, entradas y cosas que no olvidar.</p></div>
+      <a class="tile trip" href="#viaje">
+        <div class="ico" style="background:#1A2230;color:#E8C77A"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18V7"/><path d="M3 14h18v4"/><path d="M21 14v-2a3 3 0 0 0-3-3h-7v5"/><circle cx="7" cy="11" r="2"/></svg></div>
+        <h2>Hotel Darcet</h2>
+        <p>19 – 23 nov · 4 noches · Batignolles</p>
+        <div class="cd"><b id="homeCount">–</b><span id="homeCountTxt">días para el viaje</span></div>
+      </a>
     </div>
   </div>
 </section>
@@ -179,7 +307,7 @@
     <div class="stats">
       <div class="stat"><b id="nPlaces">0</b><span>lugares</span></div>
       <div class="stat"><b id="nCats">0</b><span>categorías</span></div>
-      <div class="stat"><b id="span">—</b><span>de punta a punta</span></div>
+      <div class="stat"><b id="nNotes">0</b><span>con notas</span></div>
     </div>
     <div class="cats" id="cats"></div>
     <div class="list" id="list"></div>
@@ -200,6 +328,69 @@
   </div>
 </section>
 
+<!-- RESERVA -->
+<section class="view" id="viaje">
+  <div class="wx trip-v">
+    <h1>Reserva del viaje</h1>
+    <p class="sub">Confirmada por Booking.com el 10 de octubre de 2026</p>
+
+    <div class="tripbar">
+      <div><span>Entrada</span><b>jue 19 nov</b><small>desde las 12:00</small></div>
+      <div class="nights"><i></i><em>4 noches</em><i></i></div>
+      <div><span>Salida</span><b>lun 23 nov</b><small>hasta las 12:00</small></div>
+      <div class="count"><b id="tripCount">–</b><small id="tripCountTxt">días para llegar</small></div>
+    </div>
+
+    <div class="rgrid">
+      <div class="card hotelcard">
+        <h2>Hotel Darcet</h2>
+        <p class="addr">4 rue Darcet, Batignolles · 17º distrito<br>75017 París, Francia</p>
+        <div class="actions">
+          <a class="btn dark" href="#mapa" id="seeHotel">Ver en el mapa</a>
+          <a class="btn" href="https://www.google.com/maps/dir/?api=1&destination=48.883427,2.3253358" target="_blank" rel="noopener">Cómo llegar</a>
+          <a class="btn" href="tel:+33142932676">Llamar al hotel</a>
+        </div>
+        <dl>
+          <dt>Teléfono</dt><dd><a href="tel:+33142932676">+33 1 42 93 26 76</a></dd>
+          <dt>Habitación</dt><dd>Doble, 2 adultos</dd>
+          <dt>Huésped</dt><dd>Fernando Santamaria</dd>
+          <dt>Comidas</dt><dd>No incluidas</dd>
+          <dt>Confirmación</dt><dd class="num">5429988717</dd>
+        </dl>
+        <p class="hint">El PIN de la reserva no está aquí a propósito: sirve para cambiar o cancelar, así que mejor solo en el email de Booking o en su app.</p>
+      </div>
+
+      <div class="card">
+        <h2>Pagos</h2>
+        <div class="paybar"><i style="width:25%"></i></div>
+        <div class="paylegend"><span><b>112,50 €</b> pagado</span><span><b>337,50 €</b> pendiente</span></div>
+        <table class="price">
+          <tr><td>Habitación Doble, 4 noches</td><td>409,09 €</td></tr>
+          <tr><td>IVA</td><td>40,91 €</td></tr>
+          <tr class="sum"><td>Total Booking</td><td>450,00 €</td></tr>
+          <tr><td>Tasa municipal, se paga en el hotel<br><small>3,25 € por persona y noche</small></td><td>26,00 €</td></tr>
+          <tr class="total"><td>Total estancia</td><td>476,00 €</td></tr>
+        </table>
+        <p class="hint">Booking cobrará los 337,50 € pendientes automáticamente en tu tarjeta y avisará por email. El hotel acepta American Express, Visa, Mastercard, Maestro y efectivo.</p>
+      </div>
+
+      <div class="card">
+        <h2>Condiciones</h2>
+        <ul class="conds">
+          <li class="warn"><b>No reembolsable.</b> No se pueden cambiar las fechas.</li>
+          <li>Cancelar o no presentarse cuesta <b>108 €</b> (el precio de la primera noche).</li>
+          <li>La hora límite de cancelación va en hora local del hotel.</li>
+        </ul>
+        <h2 class="mt">Antes de ir</h2>
+        <label class="todo"><input type="checkbox" data-k="llegada"> Avisar al hotel de la hora de llegada</label>
+        <label class="todo"><input type="checkbox" data-k="pago"> Comprobar que se ha cobrado el pago pendiente</label>
+        <label class="todo"><input type="checkbox" data-k="efectivo"> Llevar 26 € para la tasa municipal</label>
+        <p class="hint">Atención al cliente de Booking en español: <a href="tel:+34912768614">912 76 86 14</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
 const ICONS = {
@@ -209,87 +400,116 @@ const ICONS = {
   cutlery: '<path d="M6 3v7a2 2 0 0 0 2 2 2 2 0 0 0 2-2V3"/><path d="M8 12v9"/><path d="M17 3c-2 0-3 3-3 6v3h3v9"/>',
   tree:    '<path d="M12 3l4 5h-2l3 4h-2l3 4H6l3-4H7l3-4H8l4-5z"/><path d="M11 16h2v5h-2z"/>',
   music:   '<circle cx="7" cy="17" r="3"/><circle cx="17" cy="15" r="3"/><path d="M10 17V6l10-2v11"/>',
+  landmark:'<path d="M3 21h18"/><path d="M4 10h16"/><path d="M12 3l9 5H3l9-5z"/><path d="M6 10v8M10 10v8M14 10v8M18 10v8"/>',
+  spark:   '<path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><path d="M12 8l1.5 2.5L16 12l-2.5 1.5L12 16l-1.5-2.5L8 12l2.5-1.5z"/>',
+  cup:     '<path d="M4 9h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V9z"/><path d="M16 10h1.5a2.5 2.5 0 0 1 0 5H16"/><path d="M8 3v3M12 3v3"/>',
+  star:    '<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
+  bed:     '<path d="M3 18V7"/><path d="M3 14h18v4"/><path d="M21 14v-2a3 3 0 0 0-3-3h-7v5"/><circle cx="7" cy="11" r="2"/>',
 };
 const CATS = [
+  {id:"hotel",        name:"Hotel",                color:"#1A2230", icon:"bed"},
+  {id:"referencia",   name:"Sitios de referencia", color:"#616161", icon:"landmark"},
+  {id:"interes",      name:"Sitios de interés",    color:"#9E9D24", icon:"star"},
   {id:"tiendas",      name:"Tiendas",              color:"#0288D1", icon:"bag"},
+  {id:"cafe",         name:"Café",                 color:"#795548", icon:"cup"},
   {id:"baratos",      name:"Restaurantes baratos", color:"#7CB342", icon:"coins"},
-  {id:"torres",       name:"Torres y miradores",   color:"#9C27B0", icon:"tower"},
   {id:"restaurantes", name:"Restaurantes",         color:"#8A94A0", icon:"cutlery"},
+  {id:"torres",       name:"Torres y miradores",   color:"#9C27B0", icon:"tower"},
   {id:"navidad",      name:"Navidad",              color:"#FF5252", icon:"tree"},
   {id:"techno",       name:"Techno",               color:"#673AB7", icon:"music"},
+  {id:"random",       name:"Random",               color:"#E0A800", icon:"spark"},
 ];
 const svg = (icon,size=16)=>`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[icon]}</svg>`;
-const PLACES = [
-  {name:"Ladurée",                cat:"tiendas", lat:48.870839,  lng:2.30319},
-  {name:"Cedric Grolet Opéra",    cat:"tiendas", lat:48.8678522, lng:2.3332982},
-  {name:"Mangez et cassez-vous",  cat:"baratos", lat:48.8741307, lng:2.3352254},
-  {name:"Bar Perché - Printemps", cat:"torres",  lat:48.8739295, lng:2.3273592},
-  {name:"Tuileries Garden",       cat:"navidad", lat:48.8634916, lng:2.3274943},
-  {name:"Mia Mao",                cat:"techno",  lat:48.8965897, lng:2.3954742},
-];
+const PIN_PATH="M18 44C18 44 4 29.6 4 18a14 14 0 0 1 28 0c0 11.6-14 26-14 26z";
+const pinHtml=(c,hotel,sm)=>`<div class="pin${hotel?" hotel":""}${sm?" sm":""}"><svg class="shape" width="36" height="46" viewBox="0 0 36 46"><path d="${PIN_PATH}" fill="${c.color}" stroke="${hotel?"#B8862B":"#fff"}" stroke-width="${hotel?3:2}"/></svg><span class="ico">${svg(c.icon,16)}</span></div>`;
+const pinIcon=(c,hotel,sm)=>L.divIcon({className:"",html:pinHtml(c,hotel,sm),iconSize:[36,46],iconAnchor:[18,45],popupAnchor:[0,-40]});
+const esc = t => String(t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const noteHtml = t => esc(t).replace(/\n/g,"<br>");
+// Datos del mapa "Paris" (Google My Maps), con las notas de cada sitio
+const PLACES = [{"name": "Ladurée", "cat": "tiendas", "lat": 48.870839, "lng": 2.30319, "note": "macarons super caros nos podemos comer 1 o 2"}, {"name": "Cedric Grolet Opéra", "cat": "tiendas", "lat": 48.8678522, "lng": 2.3332982, "note": "pastelitos super caros"}, {"name": "UNION BOULANGERIE PARIS 9", "cat": "tiendas", "lat": 48.8759316, "lng": 2.3475155, "note": "supuestamente uno de los mejores cuagsons de Paguí"}, {"name": "Boulangerie-Pâtisserie Terroirs d'Avenir", "cat": "tiendas", "lat": 48.8678137, "lng": 2.3481888, "note": "gud cuagson"}, {"name": "La Maison d'Isabelle", "cat": "tiendas", "lat": 48.8498436, "lng": 2.3482751, "note": "they were awarded the best croissant in Paris"}, {"name": "Maison Louvard", "cat": "tiendas", "lat": 48.8757237, "lng": 2.3406146, "note": "increible pinton el que lleva chocolatitos por dentro"}, {"name": "Pleincœur", "cat": "tiendas", "lat": 48.8864619, "lng": 2.3186604, "note": "cuagson mas fancy, el owner was named the worlds best pastry chef  (1,90€)"}, {"name": "Puffy Cookies Casanova", "cat": "tiendas", "lat": 48.8678148, "lng": 2.3318392, "note": "cookies with ice cream on top\nel tipo de ig dice que 10/10\nhay varias ubicaciones por si nos apetece ser gordos en varias zonas de la ciudad"}, {"name": "Nèulo", "cat": "tiendas", "lat": 48.8588096, "lng": 2.3545275, "note": "Esto es una cosa que ellos denominan flan pero no se parece al flan de españa, es como un pastel diria yo. Es un petit caro como 8 euros un trozo pero podemos compartir uno para probarlo porque tiene muy wena pinta"}, {"name": "Chapon Chocolaterie Batignolles", "cat": "tiendas", "lat": 48.8858359, "lng": 2.3191904, "note": "mus de chocolate pec"}, {"name": "Boulangerie Painorama", "cat": "tiendas", "lat": 48.8610198, "lng": 2.3440694}, {"name": "L'Éclair de Génie Café", "cat": "tiendas", "lat": 48.8679213, "lng": 2.3439371, "note": "gggggggggguason zombie"}, {"name": "Mangez et cassez-vous", "cat": "baratos", "lat": 48.8741307, "lng": 2.3352254}, {"name": "SANDWICH by Chez Alain Miam Miam", "cat": "baratos", "lat": 48.8617925, "lng": 2.3610492, "note": "bocadillito 2 del señor majo"}, {"name": "La Baguette du Relais", "cat": "baratos", "lat": 48.8575675, "lng": 2.3544852, "note": "bocadillito rico. Es el tipico plato de filete con patatas y la salsita esa medio verde pero metido en un bocadillo. joder que hambre tengo."}, {"name": "Bouillon Julien", "cat": "baratos", "lat": 48.8705635, "lng": 2.3532275}, {"name": "Biche", "cat": "baratos", "lat": 48.8733712, "lng": 2.3092055, "note": "medio barato diria"}, {"name": "Le Mansart", "cat": "baratos", "lat": 48.8820821, "lng": 2.3335369, "note": "menu del dia frances 13-14 euros"}, {"name": "Chez Janou", "cat": "baratos", "lat": 48.8567159, "lng": 2.3671983}, {"name": "RORI", "cat": "baratos", "lat": 48.8678254, "lng": 2.3780696, "note": "pizza slice\nentre 5-7 euros el slice"}, {"name": "Le Cèdre", "cat": "baratos", "lat": 48.8447415, "lng": 2.3491192, "note": "Shawarma"}, {"name": "Fat Belly", "cat": "baratos", "lat": 48.8636164, "lng": 2.3629912, "note": "Chino del pato rico"}, {"name": "Rue Sainte-Anne", "cat": "baratos", "lat": 48.8669948, "lng": 2.3358959, "note": "Calle de restaurantes asiaticos"}, {"name": "Grenouilles", "cat": "baratos", "lat": 48.8870559, "lng": 2.3417822, "note": "Bocata de raclette"}, {"name": "L'Atelier Entrecôte & Volaille", "cat": "baratos", "lat": 48.8550822, "lng": 2.3683378}, {"name": "Bar Perché - Printemps", "cat": "torres", "lat": 48.8739295, "lng": 2.3273592}, {"name": "Avenue de Camoens", "cat": "torres", "lat": 48.8597306, "lng": 2.2860582}, {"name": "Tuileries Garden", "cat": "navidad", "lat": 48.8634916, "lng": 2.3274943}, {"name": "Rex Club", "cat": "techno", "lat": 48.8705725, "lng": 2.3473815, "note": "19 de noviembre hard techno\nbarato rollo 15 euros\npincha hortense de beauharnais"}, {"name": "Musée de l'Orangerie", "cat": "referencia", "lat": 48.8637884, "lng": 2.3226724, "note": "Que suerte que empieza ahora la exposicion de monet"}, {"name": "Eiffel Tower", "cat": "referencia", "lat": 48.8583701, "lng": 2.2944813}, {"name": "Champs-Élysées", "cat": "referencia", "lat": 48.8696375, "lng": 2.3083137}, {"name": "Montmartre", "cat": "referencia", "lat": 48.8861929, "lng": 2.3430895}, {"name": "Notre Dame", "cat": "referencia", "lat": 48.8527288, "lng": 2.3505635}, {"name": "Arc de Triomphe", "cat": "referencia", "lat": 48.8737917, "lng": 2.2950275}, {"name": "Hôtel Darcet", "cat": "hotel", "lat": 48.883427, "lng": 2.3253358}, {"name": "Fotoautomat - Vintage photobooth Montmartre", "cat": "random", "lat": 48.8853968, "lng": 2.3387484, "note": "yo quiero una fotito ahi contigo"}, {"name": "La Casa de los Artistas", "cat": "random", "lat": 48.8592184, "lng": 2.3456696, "note": "casa okupa chulita estan los okupas pintando todo el dia a ti te gustará que eres artista también"}, {"name": "Starbucks", "cat": "cafe", "lat": 48.8709, "lng": 2.33378, "note": "Cafe de ambientacion al lado de la opera"}, {"name": "Café 1902", "cat": "cafe", "lat": 48.8661005, "lng": 2.3146725, "note": "Cafe soportales preciosisimo delisius ou mai gad"}, {"name": "Café Lucy X Mozza & Co", "cat": "cafe", "lat": 48.8622808, "lng": 2.2875596}, {"name": "Sainte Chapelle", "cat": "interes", "lat": 48.855375, "lng": 2.3449609}, {"name": "Moulin Rouge", "cat": "interes", "lat": 48.8841232, "lng": 2.3322519}, {"name": "Espace Niemeyer", "cat": "interes", "lat": 48.8777659, "lng": 2.3718008, "note": "Edificio psicodelico random"}];
 const catOf = id => CATS.find(c=>c.id===id);
 const km = (a,b)=>{const R=6371,d=x=>x*Math.PI/180,dl=d(b.lat-a.lat),dg=d(b.lng-a.lng),
   h=Math.sin(dl/2)**2+Math.cos(d(a.lat))*Math.cos(d(b.lat))*Math.sin(dg/2)**2;return 2*R*Math.asin(Math.sqrt(h));};
+const fmtKm = d => d.toFixed(1).replace(".",",")+" km";
 const gmaps = p => `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}`;
-
-// Vecino más cercano para cada sitio
-PLACES.forEach(p=>{
-  let best=null;PLACES.forEach(q=>{if(q!==p){const d=km(p,q);if(!best||d<best.d)best={q,d};}});
-  p.near=best;
-});
+const HOTEL_I = PLACES.findIndex(p=>p.cat==="hotel");
+const HOTEL = PLACES[HOTEL_I];
+PLACES.forEach(p=>{p.dh = HOTEL ? km(HOTEL,p) : null;});
+const distTxt = p => p.cat==="hotel" ? "Tu alojamiento" : (p.dh!=null ? `${fmtKm(p.dh)} del hotel` : "");
 
 // Mapa
-const map = L.map("map",{zoomControl:true}).setView([48.875,2.34],13);
+const map = L.map("map",{zoomControl:true,tap:false,zoomSnap:0.25,zoomDelta:0.5}).setView([48.87,2.33],13);
 window._map = map;
 const CARTO_KEY = "cb1_3noo_1_1986f39f42e52c474e5a16cc"; // pega aquí tu clave de carto.com/basemaps/apikey
 (CARTO_KEY
   ? L.tileLayer(`https://{s}.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}{r}.png?key=${CARTO_KEY}`,{subdomains:"abcd",maxZoom:20,attribution:"© OpenStreetMap, © CARTO"})
   : L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",{maxZoom:19,attribution:"© Esri, HERE, Garmin, OpenStreetMap contributors"})
 ).addTo(map);
-const active = new Set(CATS.map(c=>c.id));
+let filter = null; // null = todas las categorías
+const isShown = cat => filter===null || cat===filter;
 const markers = {};
 PLACES.forEach((p,i)=>{
   const c = catOf(p.cat);
-  const icon = L.divIcon({className:"",html:`<div class="pin" style="--c:${c.color}"><span>${svg(c.icon,18)}</span></div>`,iconSize:[36,44],iconAnchor:[18,44],popupAnchor:[0,-40]});
-  const m = L.marker([p.lat,p.lng],{icon}).bindPopup(
-    `<b>${p.name}</b><small>${c.name}</small><br><small>Más cerca: ${p.near.q.name} (${p.near.d.toFixed(1)} km)</small><br><a href="${gmaps(p)}" target="_blank" rel="noopener">Cómo llegar</a>`);
+  const big = p.cat==="hotel";
+  const icon = pinIcon(c,big,false);
+  const m = L.marker([p.lat,p.lng],{icon,zIndexOffset:big?1000:0}).bindPopup(
+    `<b>${esc(p.name)}</b><small>${c.name} · ${distTxt(p)}</small>${p.note?`<div class="pnote">${noteHtml(p.note)}</div>`:""}<a href="${gmaps(p)}" target="_blank" rel="noopener">Cómo llegar</a>`,{maxWidth:260});
   m.on("click",()=>select(i,false));
   markers[i]=m; m.addTo(map);
 });
 
-// Chips de categoría
+// Chips de categoría: al pulsar una se ve solo esa; "Todas" (o pulsarla otra vez) quita el filtro
 const catsEl = document.getElementById("cats");
+const chips = {};
+function addChip(id,label,n,color,icon){
+  const b = document.createElement("button");
+  b.className="chip"; b.style.setProperty("--c",color);
+  b.innerHTML=`<i>${icon?svg(icon,12):""}</i>${label} <span class="n">${n}</span>`;
+  b.onclick=()=>{ filter = (id===null || filter===id) ? null : id; render(); };
+  catsEl.appendChild(b); chips[id??"all"]=b;
+}
+addChip(null,"Todas",PLACES.filter(p=>p.cat!=="hotel").length,"#1A2230","");
 CATS.forEach(c=>{
   const n = PLACES.filter(p=>p.cat===c.id).length;
-  const b = document.createElement("button");
-  b.className="chip"; b.style.setProperty("--c",c.color);
-  b.innerHTML=`<i>${svg(c.icon,12)}</i>${c.name} <span style="color:var(--ink-2)">${n}</span>`;
-  b.onclick=()=>{active.has(c.id)?active.delete(c.id):active.add(c.id);b.classList.toggle("off");render();};
-  catsEl.appendChild(b);
+  if(n) addChip(c.id,c.name,n,c.color,c.icon);
 });
 
-// Lista
+// Lista agrupada por categoría, ordenada por cercanía al hotel
 const listEl = document.getElementById("list");
 function render(){
   listEl.innerHTML="";
-  const shown = PLACES.map((p,i)=>({p,i})).filter(({p})=>active.has(p.cat));
-  if(!shown.length){listEl.innerHTML='<div class="empty">Ninguna categoría activa. Pulsa una para mostrar sus sitios.</div>';}
-  shown.sort((a,b)=>a.p.cat.localeCompare(b.p.cat)||a.p.name.localeCompare(b.p.name)).forEach(({p,i})=>{
-    const c=catOf(p.cat);
-    const d=document.createElement("div");
-    d.className="place"; d.id="pl"+i; d.style.setProperty("--c",c.color); d.tabIndex=0;
-    d.innerHTML=`<span class="dot">${svg(c.icon,16)}</span><div><h3>${p.name}</h3><p>${c.name} · a ${p.near.d.toFixed(1)} km de ${p.near.q.name}</p></div><a href="${gmaps(p)}" target="_blank" rel="noopener">Cómo llegar</a>`;
-    d.onclick=e=>{if(e.target.tagName!=="A")select(i,true);};
-    d.onkeydown=e=>{if(e.key==="Enter")select(i,true);};
-    listEl.appendChild(d);
+  const shown = PLACES.map((p,i)=>({p,i})).filter(({p})=>isShown(p.cat));
+  Object.entries(chips).forEach(([k,b])=>b.classList.toggle("on", k===(filter??"all")));
+  CATS.forEach(c=>{
+    const group = shown.filter(({p})=>p.cat===c.id).sort((a,b)=>(a.p.dh??0)-(b.p.dh??0));
+    if(!group.length) return;
+    const h=document.createElement("h4"); h.className="grp"; h.textContent=c.name; listEl.appendChild(h);
+    group.forEach(({p,i})=>{
+      const d=document.createElement("div");
+      d.className="place"; d.id="pl"+i; d.style.setProperty("--c",c.color); d.tabIndex=0;
+      d.innerHTML=`<span class="dot">${svg(c.icon,16)}</span><div><h3>${esc(p.name)}</h3><p>${distTxt(p)}</p>${p.note?`<p class="pn">${noteHtml(p.note)}</p>`:""}</div><a href="${gmaps(p)}" target="_blank" rel="noopener">Cómo llegar</a>`;
+      d.onclick=e=>{if(e.target.tagName!=="A")select(i,true);};
+      d.onkeydown=e=>{if(e.key==="Enter")select(i,true);};
+      listEl.appendChild(d);
+    });
   });
-  Object.entries(markers).forEach(([i,m])=>{active.has(PLACES[i].cat)?m.addTo(map):map.removeLayer(m);});
+  // El hotel se queda siempre en el mapa como referencia
+  Object.entries(markers).forEach(([i,m])=>{(isShown(PLACES[i].cat)||PLACES[i].cat==="hotel")?m.addTo(map):map.removeLayer(m);});
   const pts=shown.map(({p})=>[p.lat,p.lng]);
-  if(pts.length>1)map.fitBounds(pts,{padding:[50,50]});
-  document.getElementById("nPlaces").textContent=shown.length;
-  document.getElementById("nCats").textContent=new Set(shown.map(({p})=>p.cat)).size;
-  let max=0;shown.forEach(a=>shown.forEach(b=>{max=Math.max(max,km(a.p,b.p));}));
-  document.getElementById("span").textContent=shown.length>1?max.toFixed(1)+" km":"—";
+  listEl.scrollTop=0;
+  lastPts=pts; if(map.getSize().x>0) fitMap();
+  const real=shown.filter(({p})=>p.cat!=="hotel");
+  document.getElementById("nPlaces").textContent=real.length;
+  document.getElementById("nCats").textContent=new Set(real.map(({p})=>p.cat)).size;
+  document.getElementById("nNotes").textContent=real.filter(({p})=>p.note).length;
+}
+let lastPts=[], fitted=false;
+function fitMap(){
+  if(!lastPts.length) return;
+  const mob=window.matchMedia("(max-width:760px)").matches;
+  if(lastPts.length===1){map.setView(lastPts[0],15);return;}
+  map.fitBounds(lastPts,{paddingTopLeft:[30,50],paddingBottomRight:[30,mob?40:30],maxZoom:15});
+  fitted=true;
 }
 function select(i,fly){
   document.querySelectorAll(".place").forEach(x=>x.classList.remove("active"));
@@ -305,20 +525,47 @@ mini.setView([48.875,2.34],12);
 const tileUrl = CARTO_KEY ? `https://{s}.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}{r}.png?key=${CARTO_KEY}` : "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}";
 L.tileLayer(tileUrl,{subdomains:"abcd",maxZoom:19}).addTo(mini);
 PLACES.forEach(p=>{const c=catOf(p.cat);
-  L.marker([p.lat,p.lng],{icon:L.divIcon({className:"",html:`<div class="pin sm" style="--c:${c.color}"><span>${svg(c.icon,18)}</span></div>`,iconSize:[36,44],iconAnchor:[18,44]}),interactive:false}).addTo(mini);});
+  L.marker([p.lat,p.lng],{zIndexOffset:p.cat==="hotel"?1000:0,icon:pinIcon(c,p.cat==="hotel",true),interactive:false}).addTo(mini);});
 mini.fitBounds(PLACES.map(p=>[p.lat,p.lng]),{padding:[30,30]});
-document.getElementById("mapsum").textContent=`${PLACES.length} lugares en ${new Set(PLACES.map(p=>p.cat)).size} categorías`;
+document.getElementById("mapsum").textContent=`${PLACES.length-1} lugares en ${new Set(PLACES.filter(p=>p.cat!=="hotel").map(p=>p.cat)).size} categorías, con el hotel marcado`;
 
 /* ---------- Navegación ---------- */
-const views=["inicio","mapa","tiempo"];
+const views=["inicio","mapa","tiempo","viaje"];
+let pendingSelect=false;
 function show(){
   let v=location.hash.replace("#","")||"inicio"; if(!views.includes(v))v="inicio";
   views.forEach(x=>{document.getElementById(x).classList.toggle("on",x===v);});
   document.querySelectorAll("nav .tab").forEach(t=>t.classList.toggle("on",t.dataset.v===v));
-  setTimeout(()=>{ if(v==="mapa")map.invalidateSize(); if(v==="inicio"){mini.invalidateSize();mini.fitBounds(PLACES.map(p=>[p.lat,p.lng]),{padding:[30,30]});} },50);
+  setTimeout(()=>{ if(v==="mapa"){map.invalidateSize(); if(!fitted && !pendingSelect) fitMap();} if(v==="inicio"){mini.invalidateSize();mini.fitBounds(PLACES.map(p=>[p.lat,p.lng]),{padding:[30,30]});} },50);
 }
 window.addEventListener("hashchange",show); show();
 document.getElementById("navdate").textContent=new Date().toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long"});
+
+/* ---------- Reserva ---------- */
+const TRIP_START=new Date(2026,10,19), TRIP_END=new Date(2026,10,23);
+const TRIP_DAYS=["2026-11-19","2026-11-20","2026-11-21","2026-11-22","2026-11-23"];
+(function(){
+  const t=new Date(); t.setHours(0,0,0,0);
+  const n=Math.round((TRIP_START-t)/864e5);
+  let big, txt;
+  if(n>1){big=n;txt="días para el viaje";}
+  else if(n===1){big=1;txt="día: ¡mañana!";}
+  else if(t<=TRIP_END){big="Hoy";txt="estás en París";}
+  else {big="✓";txt="viaje terminado";}
+  ["homeCount","tripCount"].forEach(id=>document.getElementById(id).textContent=big);
+  document.getElementById("homeCountTxt").textContent=txt;
+  document.getElementById("tripCountTxt").textContent=n>1?"días para llegar":txt;
+})();
+document.getElementById("seeHotel").addEventListener("click",()=>{
+  if(HOTEL_I<0)return;
+  pendingSelect=true; fitted=true;
+  setTimeout(()=>{map.invalidateSize();select(HOTEL_I,true);pendingSelect=false;},120);
+});
+document.querySelectorAll(".todo input").forEach(cb=>{
+  const k="paris-todo-"+cb.dataset.k;
+  try{cb.checked=localStorage.getItem(k)==="1";}catch(e){}
+  cb.addEventListener("change",()=>{try{localStorage.setItem(k,cb.checked?"1":"0");}catch(e){}});
+});
 
 /* ---------- Tiempo (Open-Meteo, sin clave) ---------- */
 const WX = {
@@ -367,7 +614,12 @@ function renderWeather(d){
 
   // Vista Tiempo
   const hours=[];for(let i=start;i<start+24&&i<h.time.length;i++)hours.push(i);
+  const inWin=TRIP_DAYS.filter(x=>dy.time.includes(x)).length;
+  const tripMsg = inWin===TRIP_DAYS.length ? "Toda tu estancia (19–23 nov) está en la previsión, marcada en dorado."
+    : inWin>0 ? `Ya se ven ${inWin} de los 5 días del viaje, marcados en dorado. El resto irá apareciendo.`
+    : (new Date(dy.time[0])<=TRIP_END ? "Tu viaje es del 19 al 23 de noviembre. Esos días entran en la previsión a partir del 10 de noviembre y aparecerán marcados en dorado." : "");
   const html=`
+  ${tripMsg?`<div class="tripnote">${tripMsg}</div>`:""}
   <div class="hero">
     <div class="card"><h2>Ahora mismo</h2>
       <div class="now">${wxsvg(c.weather_code,84)}<div class="big">${Math.round(c.temperature_2m)}°</div>
@@ -376,7 +628,7 @@ function renderWeather(d){
       <div class="hours">${hours.map((i,k)=>`<div class="${k===0?"cur":""}">${k===0?"ahora":h.time[i].slice(11,16)}${wxsvg(h.weather_code[i],26)}<b>${Math.round(h.temperature_2m[i])}°</b><span class="p">${h.precipitation_probability[i]}%</span></div>`).join("")}</div></div>
   </div>
   <div class="days">${dy.time.map((t,i)=>{const dt=new Date(t);const lo=(dy.temperature_2m_min[i]-allMin)/rng*100,hi=(dy.temperature_2m_max[i]-allMin)/rng*100;
-    return `<div class="day ${i===0?"today":""}"><span class="dn">${i===0?"Hoy":DN[dt.getDay()]}</span><span class="dd">${dt.getDate()} ${dt.toLocaleDateString("es-ES",{month:"short"})}</span>
+    return `<div class="day ${i===0?"today":""} ${TRIP_DAYS.includes(t)?"trip":""}"><span class="dn">${i===0?"Hoy":DN[dt.getDay()]}</span><span class="dd">${dt.getDate()} ${dt.toLocaleDateString("es-ES",{month:"short"})}</span>${TRIP_DAYS.includes(t)?'<span class="tl">En París</span>':""}
       ${wxsvg(dy.weather_code[i],40)}<span class="desc">${wxname(dy.weather_code[i])}</span>
       <span class="tmax">${Math.round(dy.temperature_2m_max[i])}°</span><span class="tmin">mín ${Math.round(dy.temperature_2m_min[i])}°</span>
       <div class="bar"><i style="left:${lo}%;right:${100-hi}%"></i></div>
